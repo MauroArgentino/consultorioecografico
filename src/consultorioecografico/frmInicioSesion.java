@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import java.sql.*;
 
 /**
  *
@@ -24,7 +25,7 @@ public class frmInicioSesion extends javax.swing.JFrame {
         setLocationRelativeTo(null);
        
             //Imagen imagen = new Imagen();
-            ImageIcon ImagenDeLogueo = new ImageIcon(getClass().getResource("recursos/user-login-icon.png"));
+        ImageIcon ImagenDeLogueo = new ImageIcon(getClass().getResource("recursos/user-login-icon.png"));
         lblImagenDeLogueo.setIcon(ImagenDeLogueo);
         lblImagenDeLogueo.setText(null);
         txtUsuario.setToolTipText("Ingrese el nombre de usuario para iniciar sesión");
@@ -32,9 +33,12 @@ public class frmInicioSesion extends javax.swing.JFrame {
         if (txtUsuario.getText().length()>0){
             txtContrasenia.setToolTipText("Ahora ingrese su contraseña");
         }else{
-        txtContrasenia.setToolTipText("Ingrese la contraseña");
+            txtContrasenia.setToolTipText("Ingrese la contraseña");
         }
         
+        getRootPane().setDefaultButton(btnIngresar);
+        
+        //getRootPane().set
     }
 
     /**
@@ -47,8 +51,8 @@ public class frmInicioSesion extends javax.swing.JFrame {
     private void initComponents() {
 
         jDialog1 = new javax.swing.JDialog();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnIngresar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         grpInicioDeSesion = new javax.swing.JPanel();
         lblUsuario = new javax.swing.JLabel();
         lblContrasenia = new javax.swing.JLabel();
@@ -72,16 +76,17 @@ public class frmInicioSesion extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Acceso al Sistema");
         setResizable(false);
 
-        jButton1.setText("Ingresar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnIngresar.setText("Ingresar");
+        btnIngresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnIngresarActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Cancelar");
+        btnCancelar.setText("Cancelar");
 
         grpInicioDeSesion.setBorder(javax.swing.BorderFactory.createTitledBorder("Inicio de Sesión"));
         grpInicioDeSesion.setPreferredSize(new java.awt.Dimension(230, 80));
@@ -158,10 +163,9 @@ public class frmInicioSesion extends javax.swing.JFrame {
                     .addComponent(grpInicioDeSesion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(37, 37, 37)
-                        .addComponent(jButton2)
+                        .addComponent(btnCancelar)
                         .addGap(5, 5, 5)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnIngresar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -173,20 +177,83 @@ public class frmInicioSesion extends javax.swing.JFrame {
                 .addComponent(grpInicioDeSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
+                    .addComponent(btnCancelar)
+                    .addComponent(btnIngresar))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
         // TODO add your handling code here:
         
-        jDialog1.show();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        // jDialog1.show();
+         try
+                {                    
+                    //chekar si el usuario escrbio el nombre de usuario y pw
+                    if (txtUsuario.getText().length() > 0 && txtContrasenia.getText().length() > 0 )
+                    {
+                        // Si el usuario si fue validado correctamente
+                        if( validarUsuario( txtUsuario.getText(), txtContrasenia.getText() ) )    //enviar datos a validar
+                        {
+                            // Codigo para mostrar la ventana principal
+                            setVisible(false);
+                            frmPrincipal InstanciafrmPrincipal = new frmPrincipal();
+                            InstanciafrmPrincipal.setVisible(true);
+ 
+ 
+                        }
+                        else
+                        {
+                            JOptionPane.showMessageDialog(null, "El nombre de usuario y/o contrasenia no son validos.");
+                            JOptionPane.showMessageDialog(null, txtUsuario.getText()+" " +txtContrasenia.getText() );
+                            txtUsuario.setText("");    //limpiar campos
+                            txtContrasenia.setText("");        
+                             
+                            txtUsuario.requestFocusInWindow();
+                        }
+ 
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Debe escribir nombre de usuario y contrasenia.\n" +
+                            "NO puede dejar ningun campo vacio");
+                    }
+ 
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+    }//GEN-LAST:event_btnIngresarActionPerformed
 
+    boolean validarUsuario(String elUsr, String elPw)  throws IOException
+    {
+        try
+        {
+            //nombre de la BD: bdlogin
+             //nombre de la tabla: usuarios
+             //                             id      integer auto_increment not null     <--llave primaria
+             //                   campos:    usuario    char(25)
+             //                              password char(50)
+              
+            Connection unaConexion  = DriverManager.getConnection ("jdbc:mysql://localhost/consulecografico","root", "admin");
+            // Preparamos la consulta
+            Statement instruccionSQL = unaConexion.createStatement();
+            ResultSet resultadosConsulta = instruccionSQL.executeQuery ("SELECT * FROM usuarios WHERE nombreusuario='"+elUsr+"' AND contrasenia=password('"+ elPw+"')");
+ 
+            if( resultadosConsulta.first() )        // si es valido el primer reg. hay una fila, tons el usuario y su pw existen
+                return true;        //usuario validado correctamente
+            else
+                return false;        //usuario validado incorrectamente
+                 
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+ 
+    }
     /**
      * @param args the command line arguments
      */
@@ -213,24 +280,25 @@ public class frmInicioSesion extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(frmInicioSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        try{
+       try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch(Exception e){
         e.printStackTrace();
         }
-
+//JFrame.setDefaultLookAndFeelDecorated(false);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new frmInicioSesion().setVisible(true);
+                
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnIngresar;
     private javax.swing.JPanel grpInicioDeSesion;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel2;
