@@ -19,6 +19,7 @@ import java.sql.*;
  * @author chenao
  *
  */
+
 public class Conexion {
    /**Parametros de conexion*/
    static String bd = "consulecografico";
@@ -28,7 +29,7 @@ public class Conexion {
  
    Connection connection = null;
  
-   /** Constructor de DbConnection */
+   /** Constructor de Conexion */
    public Conexion() {
       try{
          //obtenemos el driver de para mysql
