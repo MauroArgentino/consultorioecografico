@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import java.sql.*;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 /**
  *
@@ -206,8 +207,8 @@ public class frmInicioSesion extends javax.swing.JFrame {
                         }
                         else
                         {
-                            JOptionPane.showMessageDialog(null, "El nombre de usuario y/o contrasenia no son validos.");
-                            JOptionPane.showMessageDialog(null, txtUsuario.getText()+" " +txtContrasenia.getText() );
+                            JOptionPane.showMessageDialog(null, "El nombre de usuario y/o contraseña no son válidos.", "Atención", ERROR_MESSAGE);
+                            //JOptionPane.showMessageDialog(null, txtUsuario.getText()+" " +txtContrasenia.getText() );
                             txtUsuario.setText("");    //limpiar campos
                             txtContrasenia.setText("");        
                              
@@ -227,8 +228,9 @@ public class frmInicioSesion extends javax.swing.JFrame {
                 }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
-    boolean validarUsuario(String elUsr, String elPw)  throws IOException
+    boolean validarUsuario(String elUsr, String elPw)  throws Exception
     {
+        
         try
         {
             //nombre de la BD: bdlogin
@@ -236,8 +238,8 @@ public class frmInicioSesion extends javax.swing.JFrame {
              //                             id      integer auto_increment not null     <--llave primaria
              //                   campos:    usuario    char(25)
              //                              password char(50)
-              
             Connection unaConexion  = DriverManager.getConnection ("jdbc:mysql://localhost/consulecografico","root", "admin");
+            
             // Preparamos la consulta
             Statement instruccionSQL = unaConexion.createStatement();
             ResultSet resultadosConsulta = instruccionSQL.executeQuery ("SELECT * FROM usuarios WHERE nombreusuario='"+elUsr+"' AND contrasenia=password('"+ elPw+"')");
@@ -247,13 +249,35 @@ public class frmInicioSesion extends javax.swing.JFrame {
             else
                 return false;        //usuario validado incorrectamente
                  
-        } catch (Exception e)
+        } catch (SQLException e)
         {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getSQLState());
+            JOptionPane.showMessageDialog(null, e.getErrorCode());
             return false;
         }
  
     }
+        /*catch (SQLException e) {
+            System.out.println("Excepción SQLException: ");
+            System.out.println("Mensaje:....." + e.getMessage());
+            System.out.println("SQLState:...." + e.getSQLState());
+            System.out.println("Código proveedor:." + e.getErrorCode());
+            System.out.println("-----------------------------------------------------");
+            e.printStackTrace();
+        }catch (Exception ex) {
+            System.out.println("Se ha lanzado una excepción que no es una SQLException: ");
+            ex.printStackTrace();
+        } /*finally {
+            try {
+                if ( unaConexion != null) {
+                    unaConexion.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Excepción capturada al intentar concluir...");
+        
+        return false;*/
+      
     /**
      * @param args the command line arguments
      */

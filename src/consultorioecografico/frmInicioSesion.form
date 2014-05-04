@@ -131,7 +131,7 @@
                   </Group>
               </Group>
               <Group type="102" attributes="0">
-                  <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="13" max="32767" attributes="0"/>
                   <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -149,7 +149,7 @@
                       <Component id="lblContrasenia" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtContrasenia" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="4" max="32767" attributes="0"/>
+                  <EmptySpace pref="5" max="32767" attributes="0"/>
                   <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
